@@ -1,11 +1,17 @@
 /*
-======================
-Bronze Layer Tables
-======================
-
+==========================================================================================
+Script: ddl_bronze.sql
+==========================================================================================
 Purpose:
-	Creates all raw ingestion (bronze) tables.
-	Drops existing tables if they exist, then recreates them.
+	Defines the Bronze layer tables for the data warehouse (raw ingestion layer).
+	Drops existing table if they exist, then recreates them to ensure a clean structure.
+
+Details:
+	- Schema: Bronze
+	- Tables: crm_cust_info, crm_prd_info, crm_sales_details,
+			  erp_loc_a101, erp_cust_az12, erp_px_cat_g1v2
+	- Each table corresponds to a raw data source (CRM or ERP systems).
+==========================================================================================
 */
 
 
