@@ -1,17 +1,53 @@
 /*
 ============================================================================
-Stored Procedure: Load Bronze Layer (Source -> Bronze)
+Stored Procedure: bronze.load_bronze
 ============================================================================
 Script Purpose:
-	Loads CSV data into the 'bronze' schema tables.
-	- Truncates existing data to avoid duplicates
-	- Uses PostgreSQL's COPY command to import data efficiently
+	Loads raw source data from CSV files into the 'bronze' schema tables.
+	This procedure serves as Extract & Load (E/L) step in the data warehouse
+	pipeline.
+
+	It performs the following tasks:
+		1. Logs the start and end times for monitoring
+		2. Truncate the existing Bronze Tables (to avoid duplicates).
+		3. Uses PostgreSQL's COPY command to buld load CSV files from a
+			given file path into each table.
+		4. Display progress and perfomance information using RAISE NOTICE.
+
+Parameters:
+	IN base_path TEXT
+		- The directory path containing the source data folders.
+		Example:
+			'C:\postgres_data_landing\data_warehouse_project'
+		- Expected structure:
+			source_crm/
+				cust_info.csv
+				prd_info.csv
+				sales_details.csv
+			source_erp/
+				loc_a101.csv
+				cust_az12.csv
+				px_cat_g1v2.csv
+				
+Usage:
+	CALL bronze.load_bronze('C:\postgres_data_landing\data_warehouse_project');
+
+Notes:
+	- The PostgreSQL service user must have read access to the base_path.
+	- The tables in schema 'bronze' must exists before running this procedure.
+	- The COPY command runs on the server side (not client side).
+	- All CSVs must have headers and be comma-delimited.
+	
 ============================================================================
 */
 
+
+CALL bronze.load_bronze('C:\data-engineering-projects\sql\data-warehouse\sql-data-warehouse-project\datasets');
+
+
 CREATE OR REPLACE PROCEDURE bronze.load_bronze(base_path TEXT)
 LANGUAGE plpgsql
-AS $$
+AS $$ 
 DECLARE
     start_time       TIMESTAMP;
     end_time         TIMESTAMP;
@@ -140,5 +176,3 @@ EXCEPTION
 END;
 $$;
 
-
-CALL bronze.load_bronze('C:\data-engineering-projects\sql\data-warehouse\sql-data-warehouse-project\datasets');
