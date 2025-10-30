@@ -278,3 +278,44 @@ SELECT
 		ELSE	'n/a'
 	END AS gen
 FROM bronze.erp_cust_az12;
+
+
+
+-- ERP_LOC_A101
+-- Data Quality Checks
+SELECT * FROM bronze.erp_loc_a101;
+
+-- 1. check for unwated space
+SELECT DISTINCT
+	cntry,
+	cntry_clean
+FROM (
+SELECT
+	cid,
+	REPLACE(TRIM(cid), '-', '') AS cid_clean,
+	cntry,
+	CASE
+		WHEN	UPPER(TRIM(cntry)) IN ('US', 'USA', 'UNITED STATES')	THEN 'United States'
+		WHEN	TRIM(cntry) = '' OR cntry IS NULL	THEN 'n/a'
+		WHEN	UPPER(TRIM(cntry)) = 'DE'	THEN 'Germany'
+		ELSE	TRIM(cntry)
+	END AS cntry_clean
+FROM bronze.erp_loc_a101
+);
+
+ 
+-- 2. Data Normalization/Standardization and Consistency for low cardinality
+SELECT DISTINCT
+	cntry
+FROM bronze.erp_loc_a101;
+
+-- Final Query erp_loc_a101
+SELECT
+	REPLACE(TRIM(cid), '-', '') AS cid,
+	CASE
+		WHEN	UPPER(TRIM(cntry)) IN ('US', 'USA', 'UNITED STATES')	THEN 'United States'
+		WHEN	TRIM(cntry) = '' OR cntry IS NULL	THEN 'n/a'
+		WHEN	UPPER(TRIM(cntry)) = 'DE'	THEN 'Germany'
+		ELSE	TRIM(cntry)
+	END AS cntry
+FROM bronze.erp_loc_a101;
