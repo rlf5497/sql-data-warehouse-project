@@ -10,6 +10,14 @@ FROM silver.crm_cust_info;
 -- 1. Equal the cst_key to cid
 -- 2. Identify out-of-range dates
 
+TRUNCATE TABLE silver.erp_cust_az12;
+
+
+INSERT INTO silver.erp_cust_az12 (
+	cid,
+	bdate,
+	gen
+)
 SELECT 	DISTINCT
 	cid,
 	bdate,
@@ -35,4 +43,17 @@ SELECT
 	END AS gen
 FROM bronze.erp_cust_az12
 ) AS sq;
-	
+
+
+SELECT DISTINCT
+	gen
+FROM silver.erp_cust_az12;
+
+SELECT
+	cid
+FROM silver.erp_cust_az12
+WHERE
+	cid NOT IN (SELECT cst_key FROM silver.crm_cust_info);
+
+
+SELECT * FROM silver.crm_cust_info LIMIT 1;
