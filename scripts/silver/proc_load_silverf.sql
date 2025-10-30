@@ -222,6 +222,28 @@ BEGIN
 	end_time := clock_timestamp();
 	RAISE NOTICE '>> Load Duration: % seconds', EXTRACT(epoch FROM end_time - start_time);
 		
+
+	-- Loading silver.erp_px_cat_g1v2
+	start_time := clock_timestamp();
+	RAISE NOTICE '>> Truncating Table: silver.erp_px_cat_g1v2';
+	TRUNCATE TABLE silver.erp_px_cat_g1v2;
+	RAISE NOTICE '>> Inserting Data Into: silver.erp_px_cat_g1v2';
+	INSERT INTO silver.erp_px_cat_g1v2 (
+		id,
+		cat,
+		subcat,
+		maintenance
+	)
+
+	SELECT 
+		id,
+		TRIM(cat) AS cat,
+		TRIM(subcat) AS subcat,
+		TRIM(maintenance) AS maintenance
+	FROM bronze.erp_px_cat_g1v2;
+	end_time := clock_timestamp();
+	RAISE NOTICE '>> Load Duration: % seconds', EXTRACT(epoch FROM end_time - start_time);
+
 	
 EXCEPTION
 	WHEN OTHERS THEN
@@ -230,5 +252,4 @@ EXCEPTION
         RAISE;  -- rethrow for debugging
 END;
 $$;
-
 
