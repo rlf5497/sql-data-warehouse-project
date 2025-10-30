@@ -57,5 +57,156 @@ FROM bronze.crm_prd_info;
 
 
 
+-- CRM_SALES_DETAILS
+-- 1. Check primary key for null or duplicate values
+SELECT * FROM bronze.crm_sales_details;
 
--- 
+-- 2. Check for invalid dates
+SELECT
+	sls_order_dt,
+	sls_ship_dt,
+	sls_due_dt
+FROM bronze.crm_sales_details
+WHERE
+	sls_order_dt > sls_ship_dt
+OR	sls_order_dt > sls_due_dt
+OR	sls_order_dt < 0
+OR	sls_ship_dt < 0
+OR	sls_due_dt < 0
+OR	LENGTH(sls_order_dt::text) < 8
+OR	LENGTH(sls_ship_dt::text) < 8
+OR	LENGTH(sls_due_dt::text) < 8;
+
+-- Date Standardization
+SELECT
+	sls_order_dt,
+	CASE
+		WHEN	LENGTH(sls_order_dt::text) != 8
+		OR		sls_order_dt <= 0
+		THEN	NULL
+		ELSE	TO_DATE(sls_order_dt::text, 'YYYYMMDD')
+	END AS sls_order_dt_updated,
+	sls_ship_dt,
+	CASE
+		WHEN	LENGTH(sls_ship_dt::text) != 8
+		OR		sls_ship_dt <= 0
+		THEN	NULL
+		ELSE	TO_DATE(sls_ship_dt::text, 'YYYYMMDD')
+	END AS sls_ship_dt_updated,
+	sls_due_dt,
+	CASE
+		WHEN	LENGTH(sls_due_dt::text) != 8
+		OR		sls_due_dt <= 0
+		THEN	NULL
+		ELSE	TO_DATE(sls_due_dt::text, 'YYYYMMDD')
+	END AS sls_due_dt_updated
+FROM bronze.crm_sales_details;
+
+
+-- Business Rules: Sales = Quantity * Price
+-- SALES must not be Negative, Zeroes, NULLS
+
+
+-- SALES
+SELECT
+	sls_sales,
+	sls_quantity,
+	sls_price
+FROM bronze.crm_sales_details
+WHERE
+	sls_sales <= 0
+OR	sls_sales IS NULL;
+
+-- QUANTITY
+SELECT
+	sls_sales,
+	sls_quantity,
+	sls_price
+FROM bronze.crm_sales_details
+WHERE
+	sls_quantity <= 0
+OR	sls_quantity IS NULL;
+
+-- PRICE
+SELECT
+	sls_sales,
+	sls_quantity,
+	sls_price
+FROM bronze.crm_sales_details
+WHERE
+	sls_price <= 0
+OR	sls_price IS NULL;
+
+
+SELECT *
+FROM (
+SELECT
+	sls_sales,
+	sls_quantity,
+	sls_price,
+	CASE
+		WHEN	sls_sales != sls_quantity * ABS(sls_price)
+		OR		sls_sales <= 0
+		OR		sls_sales IS NULL
+		THEN	sls_quantity * ABS(sls_price)
+		ELSE	sls_sales
+	END AS sls_sales_check,
+	CASE
+		WHEN	sls_price <= 0
+		OR		sls_price IS NULL
+		THEN	ABS(sls_sales) / NULLIF(sls_quantity, 0)
+		ELSE	sls_price
+	END AS sls_price_check
+FROM bronze.crm_sales_details
+) AS sq
+WHERE
+	sls_sales != sls_quantity * ABS(sls_price)
+OR	sls_sales <= 0
+OR	sls_sales IS NULL
+OR	sls_quantity <= 0
+OR	sls_quantity IS NULL
+OR	sls_price <= 0
+OR	sls_price IS NULL;
+
+
+
+
+-- FINAL QUERY (crm_sales_details)
+SELECT
+	sls_ord_num,
+	sls_prd_key,
+	sls_cust_id,
+	CASE
+		WHEN	LENGTH(sls_order_dt::TEXT) != 8
+		OR		sls_order_dt <= 0
+		THEN	NULL
+		ELSE	TO_DATE(sls_order_dt::TEXT, 'YYYYMMDD')
+	END AS sls_order_dt,
+	CASE
+		WHEN	LENGTH(sls_ship_dt::TEXT) != 8
+		OR		sls_ship_dt <= 0
+		THEN	NULL
+		ELSE	TO_DATE(sls_ship_dt::text, 'YYYYMMDD')
+	END AS sls_ship_dt,
+	CASE
+		WHEN	LENGTH(sls_due_dt::TEXT) != 8
+		OR		sls_due_dt <= 0
+		THEN	NULL
+		ELSE	TO_DATE(sls_due_dt::TEXT, 'YYYYMMDD')
+	END AS sls_due_dt,
+		CASE
+		WHEN	sls_sales != sls_quantity * ABS(sls_price)
+		OR		sls_sales <= 0
+		OR		sls_sales IS NULL
+		THEN	sls_quantity * ABS(sls_price)
+		ELSE	sls_sales
+	END AS sls_sales,
+	ABS(sls_quantity),
+	CASE
+		WHEN	sls_price <= 0
+		OR		sls_price IS NULL
+		THEN	ABS(sls_sales) / NULLIF(sls_quantity, 0)
+		ELSE	sls_price
+	END AS sls_price
+FROM bronze.crm_sales_details;
+	

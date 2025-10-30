@@ -102,6 +102,8 @@ BEGIN
 	RAISE NOTICE '>> Load Duration: % seconds', EXTRACT(epoch FROM end_time - start_time);
 		
 	
+	-- Loading silver.crm_sales_details
+	
 EXCEPTION
 	WHEN OTHERS THEN
         RAISE NOTICE '========================================';
@@ -109,6 +111,3 @@ EXCEPTION
         RAISE;  -- rethrow for debugging
 END;
 $$;
-
-
-SELECT * FROM silver.crm_prd_info;
