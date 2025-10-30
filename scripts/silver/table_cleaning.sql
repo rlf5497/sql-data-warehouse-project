@@ -319,3 +319,31 @@ SELECT
 		ELSE	TRIM(cntry)
 	END AS cntry
 FROM bronze.erp_loc_a101;
+
+
+
+
+-- ERP_PX_CAT_G1V2
+-- Data Quality Checks
+SELECT * FROM bronze.erp_px_cat_g1v2;
+
+SELECT *
+FROM bronze.erp_px_cat_g1v2
+WHERE
+	id NOT IN (SELECT cat_id FROM silver.crm_prd_info);
+
+-- Data Standardization & Consistency
+SELECT DISTINCT
+	maintenance
+FROM bronze.erp_px_cat_g1v2;
+
+
+	
+-- Final Query erp_px_cat_g1v2
+SELECT 
+	id,
+	TRIM(cat) AS cat,
+	TRIM(subcat) AS subcat,
+	TRIM(maintenance) AS maintenance
+FROM bronze.erp_px_cat_g1v2;
+
