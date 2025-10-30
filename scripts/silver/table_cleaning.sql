@@ -66,13 +66,10 @@ SELECT
 	sls_order_dt,
 	sls_ship_dt,
 	sls_due_dt
-FROM bronze.crm_sales_details
+FROM silver.crm_sales_details
 WHERE
 	sls_order_dt > sls_ship_dt
 OR	sls_order_dt > sls_due_dt
-OR	sls_order_dt < 0
-OR	sls_ship_dt < 0
-OR	sls_due_dt < 0
 OR	LENGTH(sls_order_dt::text) < 8
 OR	LENGTH(sls_ship_dt::text) < 8
 OR	LENGTH(sls_due_dt::text) < 8;
@@ -169,9 +166,8 @@ OR	sls_price <= 0
 OR	sls_price IS NULL;
 
 
-
-
 -- FINAL QUERY (crm_sales_details)
+WITH checking AS (
 SELECT
 	sls_ord_num,
 	sls_prd_key,
@@ -201,12 +197,84 @@ SELECT
 		THEN	sls_quantity * ABS(sls_price)
 		ELSE	sls_sales
 	END AS sls_sales,
-	ABS(sls_quantity),
+	ABS(sls_quantity) AS sls_quantity,
 	CASE
 		WHEN	sls_price <= 0
 		OR		sls_price IS NULL
 		THEN	ABS(sls_sales) / NULLIF(sls_quantity, 0)
 		ELSE	sls_price
 	END AS sls_price
-FROM bronze.crm_sales_details;
-	
+FROM silver.crm_sales_details
+)
+
+SELECT
+	sls_sales,
+	sls_quantity,
+	sls_price
+FROM silver.crm_sales_details
+WHERE
+	sls_sales != sls_quantity * ABS(sls_price)
+OR	sls_sales <= 0
+OR	sls_sales IS NULL
+OR	sls_quantity <= 0
+OR	sls_quantity IS NULL
+OR	sls_price <= 0
+OR	sls_price IS NULL;
+
+
+
+
+
+-- ERP_CUST_AZ12
+-- Data Quality Checks
+-- 1. Nulls and Duplicates for the Primary Key
+SELECT *
+FROM bronze.erp_cust_az12;
+
+SELECT cst_key
+FROM silver.crm_cust_info;
+
+-- 2. check for unwanted spaces
+SELECT
+	cid
+FROM bronze.erp_cust_az12
+WHERE
+	cid <> TRIM(cid);
+
+-- 3. Check invalid Dates, FUTURE Dates or Very Low Dates
+SELECT
+	cid,
+	bdate,
+	gen
+FROM bronze.erp_cust_az12
+WHERE
+	bdate >= CURRENT_DATE;
+
+-- 4. Data Normalization: 
+SELECT DISTINCT
+	gen,
+	CASE
+		WHEN	UPPER(TRIM(gen)) IN ('M', 'MALE')		THEN 'Male'
+		WHEN	UPPER(TRIM(gen)) IN ('F', 'FEMALE')	THEN 'Female'	
+		ELSE	'n/a'
+	END AS tst
+FROM bronze.erp_cust_az12;
+
+-- FINAL QUERY erp_cust_az12
+SELECT
+	CASE
+		WHEN	TRIM(cid)	ILIKE 	'nas%'
+		THEN	SUBSTRING(TRIM(cid), 4, LENGTH(TRIM(cid)))
+		ELSE	TRIM(cid)
+	END AS cid,
+	CASE
+		WHEN	bdate >= CURRENT_DATE
+		THEN	NULL
+		ELSE	bdate
+	END AS bdate,
+	CASE
+		WHEN	UPPER(TRIM(gen)) IN ('M', 'MALE')		THEN 'Male'
+		WHEN	UPPER(TRIM(gen)) IN ('F', 'FEMALE') 	THEN 'Female'
+		ELSE	'n/a'
+	END AS gen
+FROM bronze.erp_cust_az12;
