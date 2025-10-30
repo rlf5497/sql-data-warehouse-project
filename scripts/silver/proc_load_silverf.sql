@@ -158,7 +158,15 @@ BEGIN
 	FROM bronze.crm_sales_details;
 	end_time := clock_timestamp();
 	RAISE NOTICE '>> Load Duration: % seconds', EXTRACT(epoch FROM end_time - start_time);
+
 	
+    ---------------------------------------------------------------------------
+    -- ERP Tables
+    ---------------------------------------------------------------------------
+    RAISE NOTICE '====================================================';
+    RAISE NOTICE 'Loading ERP Tables';
+    RAISE NOTICE '====================================================';
+
 
 	-- Loading silver.erp_cust_az12
 	start_time := clock_timestamp();
@@ -190,6 +198,30 @@ BEGIN
 	FROM bronze.erp_cust_az12;
 	end_time := clock_timestamp();
 	RAISE NOTICE '>> Load Duration: % seconds', EXTRACT(epoch FROM end_time - start_time);
+
+
+	-- Loading silver.erp_loc_a101
+	start_time := clock_timestamp();
+	RAISE NOTICE '>> Truncating Table: silver.erp_loc_a101';
+	TRUNCATE TABLE silver.erp_loc_a101;
+	RAISE NOTICE '>> Inserting Data Into: silver.erp_loc_a101';
+	INSERT INTO silver.erp_loc_a101 (
+		cid,
+		cntry
+	)
+	
+	SELECT
+		REPLACE(TRIM(cid), '-', '') AS cid,
+		CASE
+			WHEN	UPPER(TRIM(cntry)) IN ('US', 'USA', 'UNITED STATES')	THEN 'United States'
+			WHEN	TRIM(cntry) = '' OR cntry IS NULL	THEN 'n/a'
+			WHEN	UPPER(TRIM(cntry)) = 'DE'	THEN 'Germany'
+			ELSE	TRIM(cntry)
+		END AS cntry
+	FROM bronze.erp_loc_a101;
+	end_time := clock_timestamp();
+	RAISE NOTICE '>> Load Duration: % seconds', EXTRACT(epoch FROM end_time - start_time);
+		
 	
 EXCEPTION
 	WHEN OTHERS THEN
@@ -198,4 +230,5 @@ EXCEPTION
         RAISE;  -- rethrow for debugging
 END;
 $$;
+
 
