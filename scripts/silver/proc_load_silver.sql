@@ -334,4 +334,3 @@ EXCEPTION
         RAISE;  -- rethrow for debugging
 END;
 $$;
-
