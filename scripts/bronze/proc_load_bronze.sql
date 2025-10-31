@@ -65,6 +65,8 @@ BEGIN
     RAISE NOTICE 'Loading Bronze Layer from Base Path: %', base_path;
     RAISE NOTICE '====================================================';
 
+
+
     ---------------------------------------------------------------------------
     -- CRM Tables
     ---------------------------------------------------------------------------
@@ -83,7 +85,7 @@ BEGIN
     SELECT COUNT(*) INTO loaded_count FROM bronze.crm_cust_info;
     end_time := clock_timestamp();
     RAISE NOTICE '>> crm_cust_info loaded in % seconds (% rows)',
-        extract(epoch FROM end_time - start_time), loaded_count;
+        EXTRACT(epoch FROM end_time - start_time), loaded_count;
 
     -- crm_prd_info
     start_time := clock_timestamp();
@@ -96,7 +98,7 @@ BEGIN
     SELECT COUNT(*) INTO loaded_count FROM bronze.crm_prd_info;
     end_time := clock_timestamp();
     RAISE NOTICE '>> crm_prd_info loaded in % seconds (% rows)',
-        extract(epoch FROM end_time - start_time), loaded_count;
+        EXTRACT(epoch FROM end_time - start_time), loaded_count;
 
     -- crm_sales_details
     start_time := clock_timestamp();
@@ -109,7 +111,8 @@ BEGIN
     SELECT COUNT(*) INTO loaded_count FROM bronze.crm_sales_details;
     end_time := clock_timestamp();
     RAISE NOTICE '>> crm_sales_details loaded in % seconds (% rows)',
-        extract(epoch FROM end_time - start_time), loaded_count;
+        EXTRACT(epoch FROM end_time - start_time), loaded_count;
+
 
 
     ---------------------------------------------------------------------------
@@ -130,7 +133,7 @@ BEGIN
     SELECT COUNT(*) INTO loaded_count FROM bronze.erp_loc_a101;
     end_time := clock_timestamp();
     RAISE NOTICE '>> erp_loc_a101 loaded in % seconds (% rows)',
-        extract(epoch FROM end_time - start_time), loaded_count;
+        EXTRACT(epoch FROM end_time - start_time), loaded_count;
 
     -- erp_cust_az12
     start_time := clock_timestamp();
@@ -143,7 +146,7 @@ BEGIN
     SELECT COUNT(*) INTO loaded_count FROM bronze.erp_cust_az12;
     end_time := clock_timestamp();
     RAISE NOTICE '>> erp_cust_az12 loaded in % seconds (% rows)',
-        extract(epoch FROM end_time - start_time), loaded_count;
+        EXTRACT(epoch FROM end_time - start_time), loaded_count;
 
     -- erp_px_cat_g1v2
     start_time := clock_timestamp();
@@ -156,7 +159,8 @@ BEGIN
     SELECT COUNT(*) INTO loaded_count FROM bronze.erp_px_cat_g1v2;
     end_time := clock_timestamp();
     RAISE NOTICE '>> erp_px_cat_g1v2 loaded in % seconds (% rows)',
-        extract(epoch FROM end_time - start_time), loaded_count;
+        EXTRACT(epoch FROM end_time - start_time), loaded_count;
+
 
 
     -------------------------------------------------------------------------
@@ -165,8 +169,10 @@ BEGIN
     RAISE NOTICE '===================================================';
     RAISE NOTICE '	Loading Bronze Layer is Completed';
     RAISE NOTICE '	Total Load Duration: % seconds',
-        extract(epoch FROM clock_timestamp() - batch_start_time);
+        EXTRACT(epoch FROM clock_timestamp() - batch_start_time);
     RAISE NOTICE '===================================================';
+
+
 
 EXCEPTION
     WHEN OTHERS THEN
