@@ -34,6 +34,7 @@ AS $$
 DECLARE
 	start_time			TIMESTAMP;
 	end_time			TIMESTAMP;
+	loaded_count		INTEGER;
 	batch_start_time	TIMESTAMP := clock_timestamp();
 BEGIN
     RAISE NOTICE '====================================================';
@@ -45,9 +46,9 @@ BEGIN
     ---------------------------------------------------------------------------
     -- CRM Tables
     ---------------------------------------------------------------------------
-    RAISE NOTICE '====================================================';
+    RAISE NOTICE '----------------------------------';
     RAISE NOTICE 'Loading CRM Tables';
-    RAISE NOTICE '====================================================';
+    RAISE NOTICE '----------------------------------';
 	
 
 
@@ -59,9 +60,7 @@ BEGIN
 	--	• Converts marital status and gender codes into full words
 	-- ==========================================================
 	start_time := clock_timestamp();
-	RAISE NOTICE '>> Truncating Table: silver.crm_cust_info';
 	TRUNCATE TABLE silver.crm_cust_info;
-	RAISE NOTICE '>> Inserting Data Into: silver.crm_cust_info';
 	INSERT INTO silver.crm_cust_info (
 		cst_id,
 		cst_key,
@@ -98,8 +97,10 @@ BEGIN
 	) AS sq
 	WHERE
 		recent_flag =  1;
+	SELECT COUNT(*) INTO loaded_count FROM silver.crm_cust_info;
 	end_time := clock_timestamp();
-	RAISE NOTICE '>> Load Duration: % seconds', EXTRACT(epoch FROM end_time - start_time);
+	RAISE NOTICE '>> crm_cust_info loaded in % seconds (% rows)', 
+		EXTRACT(epoch FROM end_time - start_time), loaded_count;
 
 
 
@@ -112,9 +113,7 @@ BEGIN
 	--	• Calcualtes prd_end_dt using LEAD() window function
 	-- ==========================================================
 	start_time := clock_timestamp();
-	RAISE NOTICE '>> Truncating Table: silver.crm_prd_info';
 	TRUNCATE TABLE silver.crm_prd_info;
-	RAISE NOTICE '>> Inserting Data Into: silver.crm_prd_info';
 	INSERT INTO silver.crm_prd_info (
 		prd_id,
 		cat_id,
@@ -142,8 +141,10 @@ BEGIN
 		prd_start_dt::DATE AS prd_start_dt,
 		(LEAD(prd_start_dt) OVER (PARTITION BY prd_key ORDER BY prd_start_dt ASC) - INTERVAL '1 day')::DATE AS prd_end_dt
 	FROM bronze.crm_prd_info;
+	SELECT COUNT(*) INTO loaded_count FROM silver.crm_prd_info;
 	end_time := clock_timestamp();
-	RAISE NOTICE '>> Load Duration: % seconds', EXTRACT(epoch FROM end_time - start_time);
+	RAISE NOTICE '>> crm_prd_info loaded in % seconds (% rows)', 
+		EXTRACT(epoch FROM end_time - start_time), loaded_count;
 		
 
 	
@@ -155,9 +156,7 @@ BEGIN
 	--	• Recalculates missing or invalid sales from quantity * price
 	-- ==========================================================
 	start_time := clock_timestamp();
-	RAISE NOTICE '>> Truncating Table: silver.crm_sales_details';
 	TRUNCATE TABLE silver.crm_sales_details;
-	RAISE NOTICE '>> Inserting Data Into: silver.crm_sales_details';
 	INSERT INTO silver.crm_sales_details (
 		sls_ord_num,
 		sls_prd_key,
@@ -207,17 +206,19 @@ BEGIN
 			ELSE	sls_price
 		END AS sls_price
 	FROM bronze.crm_sales_details;
+	SELECT COUNT(*) INTO loaded_count FROM silver.crm_sales_details;	
 	end_time := clock_timestamp();
-	RAISE NOTICE '>> Load Duration: % seconds', EXTRACT(epoch FROM end_time - start_time);
+	RAISE NOTICE '>> crm_sales_details loaded in % seconds (% rows)', 
+		EXTRACT(epoch FROM end_time - start_time), loaded_count;
 
 
 	
     ---------------------------------------------------------------------------
     -- ERP Tables
     ---------------------------------------------------------------------------
-    RAISE NOTICE '====================================================';
+    RAISE NOTICE '----------------------------------';
     RAISE NOTICE 'Loading ERP Tables';
-    RAISE NOTICE '====================================================';
+    RAISE NOTICE '----------------------------------';
 
 
 
@@ -229,9 +230,7 @@ BEGIN
 	--	• Standardizes gender values
 	-- ==========================================================
 	start_time := clock_timestamp();
-	RAISE NOTICE '>> Truncating Table: silver.erp_cust_az12';
 	TRUNCATE TABLE silver.erp_cust_az12;
-	RAISE NOTICE '>> Inserting Data Into: silver.erp_cust_az12';
 	INSERT INTO silver.erp_cust_az12 (
 		cid,
 		bdate,
@@ -255,9 +254,10 @@ BEGIN
 			ELSE	'n/a'
 		END AS gen
 	FROM bronze.erp_cust_az12;
+	SELECT COUNT(*) INTO loaded_count FROM silver.erp_cust_az12;
 	end_time := clock_timestamp();
-	RAISE NOTICE '>> Load Duration: % seconds', EXTRACT(epoch FROM end_time - start_time);
-
+	RAISE NOTICE '>> erp_cust_az12 loaded in % seconds (% rows)', 
+		EXTRACT(epoch FROM end_time - start_time), loaded_count;
 
 
 	-- ==========================================================
@@ -267,9 +267,7 @@ BEGIN
 	--	• Standardizes country names and fills missing values
 	-- ==========================================================
 	start_time := clock_timestamp();
-	RAISE NOTICE '>> Truncating Table: silver.erp_loc_a101';
 	TRUNCATE TABLE silver.erp_loc_a101;
-	RAISE NOTICE '>> Inserting Data Into: silver.erp_loc_a101';
 	INSERT INTO silver.erp_loc_a101 (
 		cid,
 		cntry
@@ -284,8 +282,10 @@ BEGIN
 			ELSE	TRIM(cntry)
 		END AS cntry
 	FROM bronze.erp_loc_a101;
+	SELECT COUNT(*) INTO loaded_count FROM silver.erp_loc_a101;
 	end_time := clock_timestamp();
-	RAISE NOTICE '>> Load Duration: % seconds', EXTRACT(epoch FROM end_time - start_time);
+	RAISE NOTICE '>> erp_loc_a101 loaded in % seconds (% rows)', 
+		EXTRACT(epoch FROM end_time - start_time), loaded_count;
 
 		
 
@@ -295,9 +295,7 @@ BEGIN
 	--	• Removes trailing spaces from all string columns
 	-- ==========================================================
 	start_time := clock_timestamp();
-	RAISE NOTICE '>> Truncating Table: silver.erp_px_cat_g1v2';
 	TRUNCATE TABLE silver.erp_px_cat_g1v2;
-	RAISE NOTICE '>> Inserting Data Into: silver.erp_px_cat_g1v2';
 	INSERT INTO silver.erp_px_cat_g1v2 (
 		id,
 		cat,
@@ -311,8 +309,22 @@ BEGIN
 		TRIM(subcat) AS subcat,
 		TRIM(maintenance) AS maintenance
 	FROM bronze.erp_px_cat_g1v2;
+	SELECT COUNT(*) INTO loaded_count FROM silver.erp_px_cat_g1v2;
 	end_time := clock_timestamp();
-	RAISE NOTICE '>> Load Duration: % seconds', EXTRACT(epoch FROM end_time - start_time);
+	RAISE NOTICE '>> erp_px_cat_g1v2 loaded in % seconds (% rows)', 
+		EXTRACT(epoch FROM end_time - start_time), loaded_count;
+
+
+
+	-------------------------------------------------------------------------
+    -- Summary
+    -------------------------------------------------------------------------
+    RAISE NOTICE '===================================================';
+    RAISE NOTICE '	Loading Silver Layer is Completed';
+    RAISE NOTICE '	Total Load Duration: % seconds',
+        EXTRACT(epoch FROM clock_timestamp() - batch_start_time);
+    RAISE NOTICE '===================================================';
+
 
 	
 EXCEPTION
