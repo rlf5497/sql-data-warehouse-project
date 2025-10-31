@@ -1,0 +1,3 @@
+# Ignore Draw.io backups
+*.drawio.bkp 
+.*.drawio.bkp 
