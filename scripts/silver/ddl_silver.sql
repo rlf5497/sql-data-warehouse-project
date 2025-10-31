@@ -15,6 +15,7 @@ Details:
 */
 
 
+
 -- =========================================
 -- Drop & Create silver.crm_cust_info
 -- =========================================
@@ -30,6 +31,7 @@ CREATE TABLE silver.crm_cust_info (
 	cst_create_date			DATE,
 	dwh_create_date			TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 
 
 -- =========================================
@@ -48,6 +50,7 @@ CREATE TABLE silver.crm_prd_info (
 	prd_end_dt				DATE,
 	dwh_create_date			TIMESTAMP DEFAULT CURRENT_TIMESTAMP	
 );
+
 
 
 -- =========================================
@@ -69,6 +72,7 @@ CREATE TABLE silver.crm_sales_details (
 );
 
 
+
 -- =========================================
 -- Drop & Create silver.erp_loc_a101
 -- =========================================
@@ -79,6 +83,7 @@ CREATE TABLE silver.erp_loc_a101 (
 	cntry				VARCHAR(50),
 	dwh_create_date		TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 
 
 -- =========================================
@@ -92,6 +97,7 @@ CREATE TABLE silver.erp_cust_az12 (
 	gen					VARCHAR(50),
 	dwh_create_date		TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 
 
 -- =========================================
