@@ -12,7 +12,7 @@ This document outlines the naming conventions used for schemas, tables, views, c
 3. [Column Naming Conventions](#column-naming-conventions)
 4. [View Naming Convetions](#view-naming-conventions)
 
---
+---
 
 ## General Principles
 - Use **snake_case** for all names (e.g., 'customer_id', 'order_date').
