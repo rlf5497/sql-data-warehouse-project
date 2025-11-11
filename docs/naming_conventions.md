@@ -45,3 +45,20 @@ This document outlines the naming conventions used for schemas, tables, views, c
 - Use `dim_` prefix for **dimensions**, `fact_` for **fact tables**.
 - Create **views** instead of physical tables.
 - All keys (`customer_key`, `product_key`) should be surrogate keys.
+
+---
+
+## Column Naming Conventions
+| Convention | Example | Description |
+|-------------|----------|-------------|
+| Primary Key | `*_id` or `*_key` | Unique identifier for a record |
+| Foreign Key | `*_id` or `*_key` | Links to another table’s primary key |
+| Date Fields | `*_dt` or `_date` | Consistent naming for date columns |
+| Numeric Fields | `*_amt`, `*_cost`, `*_qty` | Represent amounts, cost, and quantities |
+
+---
+
+## View Naming Conventions
+- All **views** in the Gold layer must start with `gold.` schema.
+- Use clear business-friendly names (e.g., `gold.fact_sales`, `gold.dim_products`).
+- Each view should represent a **dimension** or **fact** for analytics.
