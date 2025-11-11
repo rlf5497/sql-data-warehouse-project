@@ -1,3 +1,6 @@
 # Ignore Draw.io backups
 *.drawio.bkp 
 .*.drawio.bkp 
+
+# Ignore local configuration files
+*.env
