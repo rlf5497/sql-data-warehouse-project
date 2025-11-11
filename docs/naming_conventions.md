@@ -19,4 +19,14 @@ This document outlines the naming conventions used for schemas, tables, views, c
 - Avoid spaces or special characters in names.
 - Be descriptive but concise
 - Prefix or suffix consistently to indicate meaning (e.g., '_id'. '_key', '_dt').
-- Maintain uniform naming across all layers (Bronze -> Silver -> Gold).
+- Maintain uniform naming across all layers (Bronze → Silver → Gold).
+
+---
+
+## Table Naming Conventions
+
+| Layer  | Schema Name | Table/View Prefix | Example              | Description |
+|--------|--------------|------------------|----------------------|-------------|
+| Bronze | `bronze`     | `raw_` or source name | `bronze.crm_cust_info` | Raw, unprocessed data loaded from source systems |
+| Silver | `silver`     | same as source | `silver.crm_cust_info` | Cleaned, validated, and transformed tables |
+| Gold   | `gold`       | `dim_` / `fact_` | `gold.dim_customers` | Final business-ready views (Star Schema) |
