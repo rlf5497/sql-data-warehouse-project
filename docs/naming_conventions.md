@@ -49,12 +49,11 @@ This document outlines the naming conventions used for schemas, tables, views, c
 ---
 
 ## Column Naming Conventions
-| Convention | Example | Description |
+| Pattern | Meaning | Example(s) |
 |-------------|----------|-------------|
-| Primary Key | `*_id` or `*_key` | Unique identifier for a record |
-| Foreign Key | `*_id` or `*_key` | Links to another table’s primary key |
-| Date Fields | `*_dt` or `_date` | Consistent naming for date columns |
-| Numeric Fields | `*_amt`, `*_cost`, `*_qty` | Represent amounts, cost, and quantities |
+| `dim_` | Dimension Table | `dim_customer`, `dim_product` |
+| `fact_` | Fact Table | `fact_sales` |
+| `report_` | Report Table | `report_customers`, `report_sales_monthly` |
 
 ---
 
