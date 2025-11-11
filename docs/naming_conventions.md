@@ -30,3 +30,18 @@ This document outlines the naming conventions used for schemas, tables, views, c
 | Bronze | `bronze`     | `raw_` or source name | `bronze.crm_cust_info` | Raw, unprocessed data loaded from source systems |
 | Silver | `silver`     | same as source | `silver.crm_cust_info` | Cleaned, validated, and transformed tables |
 | Gold   | `gold`       | `dim_` / `fact_` | `gold.dim_customers` | Final business-ready views (Star Schema) |
+
+### Bronze Rules
+- Table names should match the **source system** (e.g., 'bronze.crm_sales_details').
+- Columns retain original source names.
+- Minimal transformation; structure mirrors the raw source.
+
+### Silver Rules
+- Cleaned tables are named with the same suffix as bronze (e.g., 'silver.crm_sales_details').
+- Column names standardized and trimmed.
+- Reserved words avoided.
+
+### Gold Rules
+- Use 'dim_' prefix for **dimensions**, 'fact_' for **fact tables**.
+- Create **views** instead of physical tables.
+- All keys ('customer_key', 'product_key') should be surrogate keys.
