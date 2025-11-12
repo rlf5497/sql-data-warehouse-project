@@ -47,3 +47,16 @@ This document outlines the naming conventions used for schemas, tables, views, c
   **Example:**
      - `crm_customer_info` → Cleaned customer information
      - `erp_product_master` → Transformed product data
+
+---
+
+### Gold Rules
+- Tables in the Gold layer represent **business-ready data** using **Star Schema** (dimension and fact tables).
+- Use the pattern: `<category>_<entity>`
+     - `<category>` → Table role (e.g., `dim` for dimension, `fact` for fact)
+     - `<entity>` → Business concept (e.g., `customers`, `sales`)
+
+  **Example:**
+     - `dim_customers` → Dimension table for customer data
+     - `dim_products` → Dimension table for product data
+     - `fact_sales` → Fact table for sales transactions
