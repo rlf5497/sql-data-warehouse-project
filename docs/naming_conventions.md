@@ -34,5 +34,16 @@ This document outlines the naming conventions used for schemas, tables, views, c
      - `<entity>` → Original table name from the source system
 
    **Example:**
-   - `crm_customer_info` → Cleaned customer information
-   - `erp_product_master` → Transformed product data
+      - `crm_customer_info` → Customer information from the CRM system
+      - `erp_product_master` → Product details from the ERP system
+
+---
+
+### Silver Rules
+- Tables in the Silver layer are ***cleaned and transformed*** versions of the Bronze tables.
+- Maintain the same base name for traceability.
+- Use the same pattern: `<sourcesystem>_<entity>`
+  
+  **Example:**
+     - `crm_customer_info` → Cleaned customer information
+     - `erp_product_master` → Transformed product data
