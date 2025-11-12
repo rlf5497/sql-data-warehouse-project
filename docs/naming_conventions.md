@@ -12,7 +12,7 @@ This document outlines the naming conventions used for schemas, tables, views, c
 3. [Column Naming Conventions](#column-naming-conventions)
    - [Surrogate Key](#surrogate-keys)
    - [Technical Columms](#technical-columns)
-4. [Stored Procedure](#stored-procedure)
+4. [Stored Procedures](#stored-procedures)
 
 ---
 
