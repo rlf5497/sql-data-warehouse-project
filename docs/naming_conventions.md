@@ -30,6 +30,7 @@ This document outlines the naming conventions used for schemas, tables, views, c
 ### Bronze Rules
 - Tables in the Bronze Layer mirror the **raw data from source systems**.
 - Use the naming pattern: `<sourcesystem>_<entity>`
+<div style:"margin-top:-10px"></div>
      - `<source_system>` → Source system name (e.g., `crm`, `erp`)
      - `<entity>` → Original table name from the source system
 
