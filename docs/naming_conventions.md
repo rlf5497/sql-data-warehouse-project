@@ -44,7 +44,7 @@ This document outlines the naming conventions used for schemas, tables, views, c
 - Maintain the same base name for traceability.
 - Use the same pattern: `<sourcesystem>_<entity>`
   
-  **Example:**
+  **Examples:**
      - `crm_customer_info` → Cleaned customer information
      - `erp_product_master` → Transformed product data
 
@@ -56,7 +56,42 @@ This document outlines the naming conventions used for schemas, tables, views, c
      - `<category>` → Table role (e.g., `dim` for dimension, `fact` for fact)
      - `<entity>` → Business concept (e.g., `customers`, `sales`)
 
-  **Example:**
+  **Examples:**
      - `dim_customers` → Dimension table for customer data
      - `dim_products` → Dimension table for product data
      - `fact_sales` → Fact table for sales transactions
+
+#### Glossary of Category Patterns
+| Pattern  | Meaning           | Example(s)                        |
+|-----------|------------------|-----------------------------------|
+| `dim_`    | Dimension table  | `dim_customers`, `dim_products`   |
+| `fact_`   | Fact table       | `fact_sales`                      |
+| `report_` | Report table     | `report_sales_monthly`, `report_kpi_summary` |
+
+---
+
+## Column Naming Conventions
+
+### Surrogate Keys
+- All surrogate (primary) keys in dimension tables must use the suffix `_key`.
+- `<table_name>_key`
+     - `<table_name>` → The entity or dimension name
+     - `_key` → Indicates that it is a surrogate key
+
+  **Examples:**
+     - `customer_key` → Surrogate key in dim_customers
+     - `product_key` → Surrogate key in dim_products
+
+---
+
+### Technical Columns
+- Technical or metadata columns track system-related information.
+- Use the prefix `dwh_` to differentiate them from business data.
+- `dwh_<column_name>`
+     - `dwh` → Prefix for system-managed metadata
+     - `<column_name>` → Describes the column's purpose
+
+  **Examples:**
+     - `dwh_load_date` → The date the record was loaded into the warehouse
+     - `dwh_modified_by` → Username or process that updated the record
+     - `dwh_source` → Indicates the data source of the record 
