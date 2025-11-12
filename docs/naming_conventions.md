@@ -33,6 +33,6 @@ This document outlines the naming conventions used for schemas, tables, views, c
      - `<source_system>` → Source system name (e.g., `crm`, `erp`)
      - `<entity>` → Original table name from the source system
 
-**Example:**
-- `crm_customer_info` → Cleaned customer information
-- `erp_product_master` → Transformed product data
+   **Example:**
+   - `crm_customer_info` → Cleaned customer information
+   - `erp_product_master` → Transformed product data
