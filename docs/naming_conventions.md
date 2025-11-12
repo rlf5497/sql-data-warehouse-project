@@ -34,8 +34,8 @@ This document outlines the naming conventions used for schemas, tables, views, c
      - `<entity>` → Original table name from the source system
 
    **Example:**
-      - `crm_customer_info` → Customer information from the CRM system
-      - `erp_product_master` → Product details from the ERP system
+     - `crm_customer_info` → Customer information from the CRM system
+     - `erp_product_master` → Product details from the ERP system
 
 ---
 
