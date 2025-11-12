@@ -94,4 +94,22 @@ This document outlines the naming conventions used for schemas, tables, views, c
   **Examples:**
      - `dwh_load_date` → The date the record was loaded into the warehouse
      - `dwh_modified_by` → Username or process that updated the record
-     - `dwh_source` → Indicates the data source of the record 
+     - `dwh_source` → Indicates the data source of the record
+
+---
+
+## Stored Procedures
+- Stored procedures handle the data loading for each Medallion layer.
+- Use the naming pattern: `load_<layer>`
+     - `<layer>` → The target layer (`bronze`, `silver`, `gold`)
+
+  **Examples:**
+     - `load_bronze` → Loads raw data into the Bronze layer
+     - `load_silver` → Cleans and transforms data into the Silver layer
+     - `load_gold` → Builds dimension and fact views in the Gold layer
+ 
+---
+
+**Note:**
+Following these conventions ensures **clarity, maintainability, and consistency** throughout the data warehouse lifecycle.
+Each object name reflects its **purpose, data lineage, and layer association**, making collaboration and troubleshooting easier.
