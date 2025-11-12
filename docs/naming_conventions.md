@@ -32,4 +32,5 @@ This document outlines the naming conventions used for schemas, tables, views, c
 - Use the naming pattern: `<sourcesystem>_<entity>`
      - `<source_system>` → Source system name (e.g., `crm`, `erp`)
      - `<entity>` → Original table name from the source system
-  **Example:**
+
+**Example:**
