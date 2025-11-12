@@ -10,55 +10,26 @@ This document outlines the naming conventions used for schemas, tables, views, c
    -  [Silver Rules](#silver-rules)
    -  [Gold Rules](#gold-rules)
 3. [Column Naming Conventions](#column-naming-conventions)
-4. [View Naming Convetions](#view-naming-conventions)
+   - [Surrogate Key](#surrogate-keys)
+   - [Technical Columms](#technical-columns)
+4. [Stored Procedure](#stored-procedure)
 
 ---
 
 ## General Principles
-- Use **snake_case** for all names (e.g., 'customer_id', 'order_date').
-- Avoid spaces or special characters in names.
-- Be descriptive but concise
-- Prefix or suffix consistently to indicate meaning (e.g., '_id'. '_key', '_dt').
-- Maintain uniform naming across all layers (Bronze → Silver → Gold).
+- **Naming Style:** Use `snake_case` (lowercase letters with underscores `_`).
+- **Language:** Use **English** for all objects names.
+- **Clarity:** Names should be **descriptive and meaningful**, avoiding abbreviations unless well-known.
+- **Reserved Words:** Do **not** use SQL reserved keywords as identifiers.
+- **Consistency:** Follow the same naming logic across all schemas and layers.
 
 ---
 
 ## Table Naming Conventions
 
-| Layer  | Schema Name | Table/View Prefix | Example              | Description |
-|--------|--------------|------------------|----------------------|-------------|
-| Bronze | `bronze`     | `raw_` or source name | `bronze.crm_cust_info` | Raw, unprocessed data loaded from source systems |
-| Silver | `silver`     | same as source | `silver.crm_cust_info` | Cleaned, validated, and transformed tables |
-| Gold   | `gold`       | `dim_` / `fact_` | `gold.dim_customers` | Final business-ready views (Star Schema) |
-
 ### Bronze Rules
-- Table names should match the **source system** (e.g., `bronze.crm_sales_details`).
-- Columns retain original source names.
-- Minimal transformation; structure mirrors the raw source.
-
-### Silver Rules
-- Cleaned tables are named with the same suffix as bronze (e.g., `silver.crm_sales_details`).
-- Column names standardized and trimmed.
-- Reserved words avoided.
-
-### Gold Rules
-- Use `dim_` prefix for **dimensions**, `fact_` for **fact tables**.
-- Create **views** instead of physical tables.
-- All keys (`customer_key`, `product_key`) should be surrogate keys.
-
----
-
-## Column Naming Conventions
-| Convention | Example | Description |
-|-------------|----------|-------------|
-| Primary Key | `*_id` or `*_key` | Unique identifier for a record |
-| Foreign Key | `*_id` or `*_key` | Links to another table’s primary key |
-| Date Fields | `*_dt` or `_date` | Consistent naming for date columns |
-| Numeric Fields | `*_amt`, `*_cost`, `*_qty` | Represent amounts, cost, and quantities |
-
----
-
-## View Naming Conventions
-- All **views** in the Gold layer must start with `gold.` schema.
-- Use clear business-friendly names (e.g., `gold.fact_sales`, `gold.dim_products`).
-- Each view should represent a **dimension** or **fact** for analytics.
+- Tables in the Bronze Layer mirror the **raw data from source systems**.
+- Use the naming pattern: `<sourcesystem>_<entity>`
+     - `<source_system>` → Source system name (e.g., `crm`, `erp`)
+     - `<entity>` → Original table name from the source system
+  **Example:**
